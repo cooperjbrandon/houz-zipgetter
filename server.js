@@ -1,29 +1,25 @@
-var amqp, moment, clc, http,
-		connection, queue, exchange, routingKey;
+var RSVP, http, moment, clc, setup, exchange, queue, beginSetup;
 
-amqp = require('amqp');
-moment = require('moment');
-clc = require('cli-color');
+RSVP = require('rsvp');
 http = require('http');
+clc = require('cli-color');
+moment = require('moment');
+setup = require('./setup');
 
-exchange = 'houz-exchange';
-routingKey = 'pageNums';
+beginSetup = setup.beginSetup;
 
-var connectToQueue = function() {
-	console.log(clc.blue('The connection is ready'));
-	queue = connection.queue('houz-queue-getzips');
-	queue.on('open', bindQueueToExchange);
-};
+var promise = new RSVP.Promise(function(resolve, reject) {
+	beginSetup(resolve);
+});
 
-var bindQueueToExchange = function() {
-	console.log(clc.blue('The queue "' + queue.name + '" is ready'));
-	queue.bind(exchange, routingKey);
-	queue.on('queueBindOk', subscribeToQueue);
-};
+promise.then(function (resolvedValue) {
+	queue = resolvedValue.queue;
+	exchange = resolvedValue.exchange;
+	subscribeToQueue();
+});
 
 var subscribeToQueue = function() {
-	console.log(clc.blue('The queue "' +queue.name+ '" is bound to the exchange "' +exchange+ '" with the routing key "' +routingKey+ '"'));
-	queue.subscribe({ack: true}, messageReceiver);
+	queue.subscribe({ack: true}, messageReceiver); //subscribe to queue
 };
 
 var messageReceiver = function(message, headers, deliveryInfo, messageObject) {
@@ -42,13 +38,17 @@ var fetchZipIds = function(pageNum) {
 		});
 		result.on('end', function() {
 			var zips = parseZipIds(html);
-			console.log(clc.black.bgGreenBright(Object.keys(zips)));
+			pushZipsToExchange(Object.keys(zips));
 			console.log('____________________________________________________');
 			queue.shift();
 		});
 	}).on('error', function(e) {
 		console.log("Got error: " + e.message);
 	});
+};
+
+var pushZipsToExchange = function(zips) {
+	console.log(clc.black.bgGreenBright(zips));
 };
 
 var parseZipIds = function(html) {
@@ -68,6 +68,3 @@ var getZipIdFromIndex = function(html, endingIndex) {
 	}
 	return html.substring(currentIndex + 1, endingIndex);
 };
-
-connection = amqp.createConnection();
-connection.on('ready', connectToQueue);
