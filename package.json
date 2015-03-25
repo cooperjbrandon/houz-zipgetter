@@ -1,0 +1,25 @@
+{
+  "name": "houz-zipgetter",
+  "version": "1.0.0",
+  "description": "microservice for fetching zipids",
+  "main": "zip-fetcher.js",
+  "dependencies": {
+    "amqp": "^0.2.4",
+    "cli-color": "^0.3.3",
+    "moment": "^2.9.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cooperjbrandon/houz-zipgetter.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cooperjbrandon/houz-zipgetter/issues"
+  },
+  "homepage": "https://github.com/cooperjbrandon/houz-zipgetter"
+}
