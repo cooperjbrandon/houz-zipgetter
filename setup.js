@@ -1,18 +1,18 @@
-var amqp, clc, RSVP, resolve,
+var amqp, clc, moment, beginFetchOfZips,
 		connection, routingKey,
 		queue, queueName, queueConnected,
 		exchange, exchangeName, exchangeConnected;
 
 amqp = require('amqp');
 clc = require('cli-color');
-RSVP = require('rsvp');
+moment = require('moment');
 
 exchangeName = 'houz-exchange';
 queueName = 'houz-queue-getzips';
 routingKey = 'pageNums';
 
-var beginSetup = function(promiseResolve) {
-	resolve = promiseResolve;
+var beginSetup = function(beginFetch) {
+	beginFetchOfZips = beginFetch;
 	connection = amqp.createConnection();
 	connection.on('ready', connectToQueueAndExchange);
 };
@@ -47,7 +47,16 @@ var queueOrExchangeReady = function(type) {
 		console.log(clc.blue('The queue "' +queue.name+ '" is bound to the exchange "' +exchangeName+ '" with the routing key "' +routingKey+ '"'));
 		queueConnected = true;
 	}
-	if (exchangeConnected && queueConnected) { resolve({queue: queue, exchange: exchange}); }
+	if (exchangeConnected && queueConnected) { subscribeToQueue(); }
+};
+
+var subscribeToQueue = function() {
+	queue.subscribe({ack: true}, messageReceiver); //subscribe to queue
+};
+
+var messageReceiver = function(message, headers, deliveryInfo, messageObject) {
+	console.log(clc.yellow('Message received: Page Number ' + message.pageNum + ' at ' + moment().format('MMMM Do YYYY, h:mm:ss a')));
+	beginFetchOfZips(message, headers, deliveryInfo, messageObject, exchange, queue);
 };
 
 module.exports.beginSetup = beginSetup;

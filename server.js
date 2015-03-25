@@ -1,29 +1,13 @@
-var RSVP, http, moment, clc, setup, exchange, queue, beginSetup;
+var http, clc, setup, exchange, queue, beginSetup;
 
-RSVP = require('rsvp');
 http = require('http');
 clc = require('cli-color');
-moment = require('moment');
 setup = require('./setup');
 
 beginSetup = setup.beginSetup;
 
-var promise = new RSVP.Promise(function(resolve, reject) {
-	beginSetup(resolve);
-});
-
-promise.then(function (resolvedValue) {
-	queue = resolvedValue.queue;
-	exchange = resolvedValue.exchange;
-	subscribeToQueue();
-});
-
-var subscribeToQueue = function() {
-	queue.subscribe({ack: true}, messageReceiver); //subscribe to queue
-};
-
-var messageReceiver = function(message, headers, deliveryInfo, messageObject) {
-	console.log(clc.yellow('Message received: Page Number ' + message.pageNum + ' at ' + moment().format('MMMM Do YYYY, h:mm:ss a')));
+var beginFetchOfZips = function(message, headers, deliveryInfo, messageObject, e, q) {
+	queue = q, exchange = e;
 	fetchZipIds(message.pageNum);
 };
 
@@ -68,3 +52,5 @@ var getZipIdFromIndex = function(html, endingIndex) {
 	}
 	return html.substring(currentIndex + 1, endingIndex);
 };
+
+beginSetup(beginFetchOfZips);
