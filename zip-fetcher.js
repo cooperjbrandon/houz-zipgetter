@@ -1,13 +1,13 @@
-var http, clc, setup, exchange, queue, beginSetup;
+var http, clc, rabbit, beginSetup, handleZips;
 
 http = require('http');
 clc = require('cli-color');
-setup = require('./setup');
+rabbit = require('./rabbit-management');
 
-beginSetup = setup.beginSetup;
+beginSetup = rabbit.beginSetup;
+handleZips = rabbit.handleZips;
 
-var beginFetchOfZips = function(message, headers, deliveryInfo, messageObject, e, q) {
-	queue = q, exchange = e;
+var beginFetchOfZips = function(message, headers, deliveryInfo, messageObject) {
 	fetchZipIds(message.pageNum);
 };
 
@@ -22,17 +22,11 @@ var fetchZipIds = function(pageNum) {
 		});
 		result.on('end', function() {
 			var zips = parseZipIds(html);
-			pushZipsToExchange(Object.keys(zips));
-			console.log('____________________________________________________');
-			queue.shift();
+			handleZips(Object.keys(zips));
 		});
 	}).on('error', function(e) {
 		console.log("Got error: " + e.message);
 	});
-};
-
-var pushZipsToExchange = function(zips) {
-	console.log(clc.black.bgGreenBright(zips));
 };
 
 var parseZipIds = function(html) {

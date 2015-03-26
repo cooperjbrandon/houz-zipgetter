@@ -56,7 +56,14 @@ var subscribeToQueue = function() {
 
 var messageReceiver = function(message, headers, deliveryInfo, messageObject) {
 	console.log(clc.yellow('Message received: Page Number ' + message.pageNum + ' at ' + moment().format('MMMM Do YYYY, h:mm:ss a')));
-	beginFetchOfZips(message, headers, deliveryInfo, messageObject, exchange, queue);
+	beginFetchOfZips(message, headers, deliveryInfo, messageObject);
+};
+
+var handleZips = function(zipIds) {
+	for (var i = 0; i < zipIds.length; i++) {
+		exchange.publish('zipids', { zipid: zipIds[i] }); //routingKey, message
+	}
 };
 
 module.exports.beginSetup = beginSetup;
+module.exports.handleZips = handleZips;
