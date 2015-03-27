@@ -8,7 +8,7 @@ clc = require('cli-color');
 moment = require('moment');
 
 exchangeName = 'houz-exchange';
-queueName = 'houz-queue-getzips';
+queueName = 'houz-queue-getpagenum';
 routingKey = 'pageNums';
 
 var beginSetup = function(beginFetch) {
@@ -63,6 +63,11 @@ var handleZips = function(zipIds) {
 	for (var i = 0; i < zipIds.length; i++) {
 		exchange.publish('zipids', { zipid: zipIds[i] }); //routingKey, message
 	}
+	nextPage();
+};
+
+var nextPage = function() {
+	queue.shift();
 };
 
 module.exports.beginSetup = beginSetup;
