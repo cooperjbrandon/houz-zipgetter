@@ -8,12 +8,12 @@ beginSetup = rabbit.beginSetup;
 handleZips = rabbit.handleZips;
 
 var beginFetchOfZips = function(message, headers, deliveryInfo, messageObject) {
-	fetchZipIds(message.pageNum);
+	fetchZipIds(message.pagenum, message.city);
 };
 
-var fetchZipIds = function(pageNum) {
-	var url = 'http://www.zillow.com/san-jose-ca/'+pageNum+'_p/';
-	console.log(clc.green('SENDING REQUEST: Page '+ pageNum));
+var fetchZipIds = function(pagenum, city) {
+	var url = 'http://www.zillow.com/'+city+'/'+pagenum+'_p/';
+	console.log(clc.green('SENDING REQUEST: Page '+ pagenum));
 	http.get(url, function(result) {
 		var html = '';
 		console.log(clc.black.bgWhite('STATUS: ' + result.statusCode));

@@ -8,8 +8,8 @@ clc = require('cli-color');
 moment = require('moment');
 
 exchangeName = 'houz-exchange';
-queueName = 'houz-queue-getpagenum';
-routingKey = 'pageNums';
+queueName = 'houz-queue-pagenum';
+routingKey = 'pagenums';
 
 var beginSetup = function(beginFetch) {
 	beginFetchOfZips = beginFetch;
@@ -55,7 +55,7 @@ var subscribeToQueue = function() {
 };
 
 var messageReceiver = function(message, headers, deliveryInfo, messageObject) {
-	console.log(clc.yellow('Message received: Page Number ' + message.pageNum + ' at ' + moment().format('MMMM Do YYYY, h:mm:ss a')));
+	console.log(clc.yellow('Message received: Page Number ' + message.pagenum + ', City '+message.city+' at ' + moment().format('MMMM Do YYYY, h:mm:ss a')));
 	beginFetchOfZips(message, headers, deliveryInfo, messageObject);
 };
 
@@ -63,10 +63,10 @@ var handleZips = function(zipIds) {
 	for (var i = 0; i < zipIds.length; i++) {
 		exchange.publish('zipids', { zipid: zipIds[i] }); //routingKey, message
 	}
-	nextPage();
+	nextItem();
 };
 
-var nextPage = function() {
+var nextItem = function() {
 	queue.shift();
 };
 
