@@ -1,15 +1,17 @@
-var amqp, clc, moment, beginFetchOfZips,
-		connection, routingKey,
+var amqp, clc, moment, beginFetchOfZips, config,
+		connection, bindingRoutingKey, publishRoutingKey,
 		queue, queueName, queueConnected,
 		exchange, exchangeName, exchangeConnected;
 
 amqp = require('amqp');
 clc = require('cli-color');
 moment = require('moment');
+config = require('houz-config');
 
-exchangeName = 'houz-exchange';
-queueName = 'houz-queue-pagenum';
-routingKey = 'pagenums';
+exchangeName = config.exchangeName;
+queueName = config.queueName.pages;
+bindingRoutingKey = config.routingKey.pages;
+publishRoutingKey = config.routingKey.zipids;
 
 var beginSetup = function(beginFetch) {
 	beginFetchOfZips = beginFetch;
@@ -35,7 +37,7 @@ var connectToQueue = function() {
 
 var bindQueueToExchange = function() {
 	console.log(clc.blue('The queue "' + queue.name + '" is ready'));
-	queue.bind(exchangeName, routingKey); //bind to exchange w/ routingKey (most likely already done; this is just incase)
+	queue.bind(exchangeName, bindingRoutingKey); //bind to exchange w/ routingKey (most likely already done; this is just incase)
 	queue.on('queueBindOk', function() { queueOrExchangeReady('queue'); });
 };
 
@@ -61,7 +63,7 @@ var messageReceiver = function(message, headers, deliveryInfo, messageObject) {
 
 var handleZips = function(zipIds) {
 	for (var i = 0; i < zipIds.length; i++) {
-		exchange.publish('zipids', { zipid: zipIds[i] }); //routingKey, message
+		exchange.publish(publishRoutingKey, { zipid: zipIds[i] }); //routingKey, message
 	}
 	nextItem();
 };

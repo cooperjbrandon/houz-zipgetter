@@ -6,6 +6,7 @@
   "dependencies": {
     "amqp": "^0.2.4",
     "cli-color": "^0.3.3",
+    "houz-config": "git://github.com/cooperjbrandon/houz-config",
     "moment": "^2.9.0"
   },
   "devDependencies": {},
