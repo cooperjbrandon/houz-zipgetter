@@ -3,24 +3,31 @@
   "version": "1.0.0",
   "description": "microservice for fetching zipids",
   "main": "zip-fetcher.js",
-  "dependencies": {
-    "amqp": "^0.2.4",
-    "cli-color": "^0.3.3",
-    "houz-config": "git://github.com/cooperjbrandon/houz-config",
-    "moment": "^2.9.0"
-  },
-  "devDependencies": {},
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node zip-fetcher.js",
+    "test": "mocha"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/cooperjbrandon/houz-zipgetter.git"
+    "url": "https://github.com/cooperjbrandon/houz-zipz.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/cooperjbrandon/houz-zipgetter/issues"
+    "url": "https://github.com/cooperjbrandon/houz-zipz/issues"
   },
-  "homepage": "https://github.com/cooperjbrandon/houz-zipgetter"
+  "homepage": "https://github.com/cooperjbrandon/houz-zipgetter",
+  "dependencies": {
+    "amqp": "^0.2.4",
+    "cli-color": "^0.3.3",
+    "houz-config": "git://github.com/cooperjbrandon/houz-config",
+    "moment": "^2.9.0",
+    "request": "^2.55.0"
+  },
+  "devDependencies": {
+    "chai": "^2.2.0",
+    "mocha": "^2.2.1",
+    "nock": "^1.5.0",
+    "sinon": "^1.14.1"
+  }
 }
