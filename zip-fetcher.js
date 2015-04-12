@@ -1,6 +1,6 @@
-var http, clc, rabbit, beginSetup, handleZips;
+var request, clc, rabbit, beginSetup, handleZips;
 
-http = require('http');
+request = require('request');
 clc = require('cli-color');
 rabbit = require('./rabbit-management');
 
@@ -14,18 +14,13 @@ var beginFetchOfZips = function(message, headers, deliveryInfo, messageObject) {
 var fetchZipIds = function(pagenum, city) {
 	var url = 'http://www.zillow.com/'+city+'/'+pagenum+'_p/';
 	console.log(clc.green('SENDING REQUEST: Page '+ pagenum));
-	http.get(url, function(result) {
-		var html = '';
-		console.log(clc.black.bgWhite('STATUS: ' + result.statusCode));
-		result.on('data', function(chunk) {
-			html += new Buffer(chunk).toString('utf8');
-		});
-		result.on('end', function() {
-			var zips = parseZipIds(html);
+	request.get(url, function(error, response, body) {
+		if (error) {
+			console.log("Got error: " + error.message);
+		} else {
+			var zips = parseZipIds(body);
 			handleZips(Object.keys(zips));
-		});
-	}).on('error', function(e) {
-		console.log("Got error: " + e.message);
+		}
 	});
 };
 
