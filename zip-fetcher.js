@@ -13,21 +13,22 @@ var beginFetchOfZips = function(message, headers, deliveryInfo, messageObject) {
 
 var fetchZipIds = function(pagenum, city) {
 	var url = 'http://www.zillow.com/'+city+'/'+pagenum+'_p/';
-	console.log(clc.green('SENDING REQUEST: Page '+ pagenum));
 	request.get(url, function(error, response, body) {
 		if (error) {
 			console.log("Got error: " + error.message);
 		} else {
-			var zips = parseZipIds(body);
-			handleZips(Object.keys(zips));
+			handleZips(parseZipIds(body));
+			// handleZips(Object.keys(zips));
 		}
 	});
 };
 
 var parseZipIds = function(html) {
-	var startIndex = 0, searchStrLen = '_zpid'.length, zpIds = {}, index;
+	var startIndex = 0, searchStrLen = '_zpid'.length, zpIds = [], index;
 	while ((index = html.indexOf('_zpid', startIndex)) > -1) {
-		zpIds[getZipIdFromIndex(html, index)] = true; //get each zpid and save to object
+		//get each zpid and save to array if not yet in array
+		var zip = getZipIdFromIndex(html, index);
+		if (zpIds.indexOf(zip) === -1) { zpIds.push(zip); }
 		startIndex = index + searchStrLen;
 	}
 	return zpIds;
