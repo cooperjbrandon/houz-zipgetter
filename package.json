@@ -1,5 +1,5 @@
 {
-  "name": "houz-zipgetter",
+  "name": "houz-zipz",
   "version": "1.0.0",
   "description": "microservice for fetching zipids",
   "main": "zip-fetcher.js",
@@ -16,7 +16,7 @@
   "bugs": {
     "url": "https://github.com/cooperjbrandon/houz-zipz/issues"
   },
-  "homepage": "https://github.com/cooperjbrandon/houz-zipgetter",
+  "homepage": "https://github.com/cooperjbrandon/houz-zipz",
   "dependencies": {
     "amqp": "^0.2.4",
     "cli-color": "^0.3.3",
