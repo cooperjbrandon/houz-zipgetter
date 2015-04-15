@@ -18,7 +18,6 @@ var fetchZipIds = function(pagenum, city) {
 			console.log("Got error: " + error.message);
 		} else {
 			handleZips(parseZipIds(body));
-			// handleZips(Object.keys(zips));
 		}
 	});
 };
